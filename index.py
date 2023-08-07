@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, redirect, request
 from forms import SignUpForm
 
 app = Flask(__name__)
@@ -22,9 +22,12 @@ def home():
 def user_id(user_id):
     return "This user id is: " + user_id
 
-@app.route("/signup")
+@app.route("/signup", methods=['GET', 'POST'])
 def signup():
     form = SignUpForm()
+    if form.is_submitted():
+        result = request.form
+        return render_template('client.html', result=result)
     return render_template('signup.html', form=form)
 
 
