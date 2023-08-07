@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+{% extends "index.html" %}
+{% block content %}
+    <div>
+        {% for obj in obj %}
+        <h1>Name: {{obj.name}}</h1>
+        <p>Age: {{obj.age}}</p>
+        {% endfor %}
+        </div>
+{% endblock %}
