@@ -25,9 +25,11 @@ def user_id(user_id):
 @app.route("/signup", methods=['GET', 'POST'])
 def signup():
     form = SignUpForm()
+
     if form.is_submitted():
         result = request.form
         return render_template('client.html', result=result)
+        
     return render_template('signup.html', form=form)
 
 
