@@ -1,8 +1,8 @@
 import { useState } from "react";
 import TodoForm from "./TodoForm";
 import Todo from "./Todo";
-function TodoLogic() {
 
+function TodoLogic() {
 
     const [todos, setTodos] = useState([
         {
@@ -14,52 +14,52 @@ function TodoLogic() {
             isCompleted: false
         }
     ]);
-    /* const createTask = () => {
+    const [todoId, setTodoId] = useState("")
 
-        fetch('http://localhost:6789/tasks/', {
-          method: 'POST',
-          body: JSON.stringify({
-            title: input
-          }),
-          headers: {
-            "Content-type": "application/json; charset=UTF-8"
-          }
-        })
-        setInput("")
-      };
-    
-      const deleteTask = (id) => {
-        fetch(`http://localhost:6789/tasks/${id}`, {
-          method: 'DELETE',
-          headers: {
-            "Content-type": "application/json; charset=UTF-8"
-          }
-        })
-        setRender(true)
-      }; */
-    function addTodo (text) {
+    function addTodo(text) {
 
-        fetch('http://localhost:5000/add_data', {
+        fetch('http://localhost:5000/add-data', {
             method: 'POST',
             body: JSON.stringify({
-              todo: text
+                todo: text,
+                isCompleted: false
             }),
             headers: {
-              "Content-type": "application/json; charset=UTF-8"
+                "Content-type": "application/json; charset=UTF-8"
             }
-          })
-         
+        })
+        .then(res => res.json())
+        .then(id => setTodoId(id))
+        
         const newTodos = [...todos, { text }];
         setTodos(newTodos)
     };
 
-    const completeTodo = index => {
+    function completeTodo(todoId, index) {
+
+        fetch(`http://localhost:5000/update-todo-status/${todoId}`, {
+            method: 'PUT',
+            body: JSON.stringify({
+                isCompleted: true
+            }),
+            headers: {
+                "Content-type": "application/json; charset=UTF-8"
+            }
+        })
+
         const newTodos = [...todos];
         newTodos[index].isCompleted = true;
         setTodos(newTodos)
     }
 
-    const removeTodo = index => {
+    function removeTodo(todoId, index) {
+        fetch(`http://localhost:5000/delete/${todoId}`, {
+            method: 'DELETE',
+            headers: {
+                "Content-type": "application/json; charset=UTF-8"
+            }
+        })
+        
         const newTodos = [...todos];
         newTodos.splice(index, 1);
         setTodos(newTodos)
@@ -73,8 +73,8 @@ function TodoLogic() {
                     <Todo
                         key={index}
                         todo={todo}
-                        completeTodo={() => completeTodo(index)}
-                        removeTodo={() => removeTodo(index)}
+                        completeTodo={() => completeTodo(index, todo._id)}
+                        removeTodo={() => {removeTodo(index, todoId); console.log(todoId)}}
                     />
                 ))}
                 <TodoForm addTodo={addTodo} />
