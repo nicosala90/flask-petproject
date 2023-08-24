@@ -1,0 +1,11 @@
+[
+    {
+        "todo": "do it",
+        "isCompleted": true,
+        "list-of": [1,2,3]
+    },
+    {
+        "todo": "do something",
+        "isCompleted": false
+    }
+]

@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 from pymongo import MongoClient
-#from flask_pymongo import PyMongo
+
 from bson.json_util import dumps
 from flask_cors import CORS
 from bson.objectid import ObjectId
@@ -10,7 +10,7 @@ CORS(app)
 
 client = MongoClient('localhost', 27017)
 app.config['MONGO_URI'] = 'mongodb://localhost:27017'
-#mongo = PyMongo(app)
+
 db = client.todos_db
 collection = db.todos
 
@@ -22,7 +22,7 @@ def get_all_todos():
     return serialized_data, 200, {'Content-Type': 'application/json'}
 
 
-@app.route('/add-data', methods=['POST'])
+@app.post('/add-data')
 def add_data():
    
     data = request.json
@@ -30,14 +30,19 @@ def add_data():
     return jsonify({"_id": str(result.inserted_id)}), 201
 
 
-@app.put('/update-todo-status/<string:todo_id>')
+@app.patch('/update-todo-status/<string:todo_id>')
 def update_todo_complete_status(todo_id):
-    
-    collection.find_one({"_id": ObjectId(todo_id)})
+    updated_todo_iscompleted = collection.find_one({"_id": ObjectId(todo_id)})
+   
+    myquery = {"_id": ObjectId(todo_id)}
+    newvalues = { "$set": { "isCompleted": True } }
+    collection.update_one(myquery, newvalues)
+
     return "Todo has benn updated to is completed"
 
 @app.delete('/delete/<string:todo_id>')
 def delete_todo(todo_id):
+    print(todo_id)
     collection.delete_one({"_id": ObjectId(todo_id)})
     return "Todo has been deleted"
 

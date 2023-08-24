@@ -14,7 +14,7 @@ function TodoLogic() {
             isCompleted: false
         }
     ]);
-    const [todoId, setTodoId] = useState("")
+    //const [todoId, setTodoId] = useState("")
 
     function addTodo(text) {
 
@@ -29,19 +29,18 @@ function TodoLogic() {
             }
         })
         .then(res => res.json())
-        .then(id => setTodoId(id))
-        
-        const newTodos = [...todos, { text }];
-        setTodos(newTodos)
+        .then(data => {
+            const newTodos = [...todos, { text, _id: data._id }];
+            setTodos(newTodos);
+        })
+       
     };
 
     function completeTodo(todoId, index) {
 
         fetch(`http://localhost:5000/update-todo-status/${todoId}`, {
-            method: 'PUT',
-            body: JSON.stringify({
-                isCompleted: true
-            }),
+            method: 'PATCH',
+            
             headers: {
                 "Content-type": "application/json; charset=UTF-8"
             }
@@ -53,18 +52,19 @@ function TodoLogic() {
     }
 
     function removeTodo(todoId, index) {
-        fetch(`http://localhost:5000/delete/${todoId}`, {
+        
+        fetch(`http://127.0.0.1:5000/delete/${todoId}`, {
             method: 'DELETE',
             headers: {
                 "Content-type": "application/json; charset=UTF-8"
             }
         })
-        
-        const newTodos = [...todos];
-        newTodos.splice(index, 1);
-        setTodos(newTodos)
+        .then(() => {
+            const newTodos = [...todos];
+            newTodos.splice(index, 1);
+            setTodos(newTodos);
+        })
     }
-
 
     return (
         <div className="app">
@@ -73,8 +73,9 @@ function TodoLogic() {
                     <Todo
                         key={index}
                         todo={todo}
-                        completeTodo={() => completeTodo(index, todo._id)}
-                        removeTodo={() => {removeTodo(index, todoId); console.log(todoId)}}
+                        todoId={todo._id}
+                        completeTodo={() => completeTodo(todo._id, index)}
+                        removeTodo={() => removeTodo(todo._id, index)}
                     />
                 ))}
                 <TodoForm addTodo={addTodo} />
