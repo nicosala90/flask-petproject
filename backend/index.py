@@ -42,7 +42,6 @@ def update_todo_complete_status(todo_id):
 
 @app.delete('/delete/<string:todo_id>')
 def delete_todo(todo_id):
-    print(todo_id)
     collection.delete_one({"_id": ObjectId(todo_id)})
     return "Todo has been deleted"
 
